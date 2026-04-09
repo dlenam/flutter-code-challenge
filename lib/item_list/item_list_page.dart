@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_code_challenge/item_list/data/item.dart';
 
 import 'data/item_api.dart';
 import 'data/item_page.dart';
@@ -11,7 +12,7 @@ class ItemListPage extends StatefulWidget {
 }
 
 class _ItemListPageState extends State<ItemListPage> {
-  ItemPage? page;
+  List<Item> items = [];
 
   @override
     void initState() {
@@ -19,22 +20,24 @@ class _ItemListPageState extends State<ItemListPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final fetchPage = await ItemApi().fetchPage(startingIndex: 0);
         setState(() {
-          page = fetchPage;
+          items = fetchPage.items;
         });
       });
     }
 
   @override
   Widget build(BuildContext context) {
-    final items = page?.items;
+    final items = this.items;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item List'),
       ),
-      body: items == null ?
-        CircularProgressIndicator(
+      body: items.isEmpty ?
+        Center(
+          child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             strokeWidth: 5.0,
+          ),
         ):
         ListView.builder(
           itemCount: items.length,
